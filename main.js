@@ -13,22 +13,20 @@
 let taskInput = document.getElementById("task-input");
 let addButton = document.getElementById("add-button");
 let tabs = document.querySelectorAll(".task-tabs div");
+let underLine = document.getElementById("under-line");
 let taskList = []
 let filterList = []
 let mode='all'
 
 addButton.addEventListener("click", addTask)
-// 인풋값 초기화
-taskInput.addEventListener("click",function(){
-    taskInput.value=""; 
-});
+
 
 
 for(let i=1; i<tabs.length;i++){
     tabs[i].addEventListener("click", function(event){
-        filter(event)
-    });
-
+        filter(event)});
+    tabs[i].addEventListener("click",(event)=>
+    lineIndicator(event));
 }
 console.log(tabs)
 
@@ -41,6 +39,7 @@ function addTask(){
     taskList.push(task);
     console.log(taskList);
     render();
+    addButton.disabled=true;
 }
 
 function render() {
@@ -59,7 +58,8 @@ function render() {
             resultHTML += `<div class="task">
             <div class="task-done">${list[i].taskContent}</div>
             <div>
-                <button onclick = "toggleComplete('${list[i].id}')">Check</button>
+                <button onclick = "toggleComplete('${list[i].id}')">Done
+                </button>
                 <button onclick = "deleteTask('${list[i].id}')">Delete</button>
             </div>
         </div>`;
@@ -132,9 +132,44 @@ function randomIDGenerate(){
     return '_' + Math.random().toString(36).substr(2, 9);
 }
 
-// 인풋값이 없을 경우 버튼 사용 불가
-// if(taskInput.value == ""){
-//     addButton.disabled = true;
-// } else {
-//     addButton.disabled = false;
+// function enterKey(e){ //엔터키이벤트
+//     if(e.keyCode==13){
+//         addTask();
+//     }
 // }
+
+// 인풋값 초기화
+addButton.addEventListener("click", function(){ //클릭초기화
+    taskInput.value="";     
+}); 
+function enterPress(e){ //엔터키초기화 함수
+    if(e.keyCode==13){
+        taskInput.value=""; 
+    }
+}
+
+//인풋 공백이면 addButton 미동작 
+//(이 부분은 모르겠어서 코알누 코드에서 따왔습니다ㅠㅠ)
+function inputDisabled(){
+    taskInput.addEventListener("keyup",function(event){
+        if (taskInput.value !== ""){
+            addButton.disabled = false;
+        } else {
+            addButton.disabled = true;
+        }
+    })
+}
+inputDisabled()
+addButton.disabled = true;
+
+function enterKey(event){
+    if(event.keyCode==13){
+        addTask();
+    }
+}
+
+function lineIndicator(e){
+    underLine.style.left = e.currentTarget.offsetLeft + "px";
+    underLine.style.width = e.currentTarget.offsetWidth + "px";
+    underLine.style.top = e.currentTarget.offsetTop + e.currentTarget.offsetHeight -3 + "px";
+}
